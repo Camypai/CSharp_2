@@ -8,7 +8,7 @@ namespace CompGame
         {
             var form = new Form
             {
-                Width = 800, Height = 600
+                Width = 800, Height = 600, FormBorderStyle = FormBorderStyle.FixedSingle
             };
 
             Game.Init(form);
