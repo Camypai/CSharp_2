@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using CompGame.Models;
 
 namespace CompGame
 {
-    static class Game
+    internal static class Game
     {
         private static BufferedGraphicsContext _context;
         public static BufferedGraphics Buffer;
 
-        public static BaseObject[] _BaseObjects;
+        public static List<BaseObject> _BaseObjects;
 
         public static int Width { get; set; }
         public static int Height { get; set; }
@@ -48,12 +49,39 @@ namespace CompGame
 
         public static void Load()
         {
-            _BaseObjects = new BaseObject[30];
-            for (var i = 0; i < _BaseObjects.Length/2; i++)
-                _BaseObjects[i] = new Star(new Point(600, i * 20), new Point(-i, 0), new Size(5, 5));
+            const int _maxObjectsCount = 30;
             
-            for (var i = _BaseObjects.Length / 2; i < _BaseObjects.Length; i++)
-                _BaseObjects[i] = new BaseObject(new Point(600, i * 20), new Point(-i, -i), new Size(10, 10));
+            var rnd = new Random();
+
+            var _starsCount = rnd.Next(0, _maxObjectsCount);
+            var _linesCount = rnd.Next(0, _maxObjectsCount - _starsCount);
+            var _baseObjectsCount = _maxObjectsCount - _linesCount - _starsCount;
+
+            var _stars = new Star[_starsCount];
+            var _lines = new Line[_linesCount];
+            
+            var _baseObjects = new BaseObject[_baseObjectsCount];
+            
+            for (var i = 0; i < _starsCount; i++)
+            {
+                var r = rnd.Next(2, 30);
+                _stars[i] = new Star(new Point(Width, i * 20), new Point(-1 * r, 0),
+                    new Size(2+r, 2 +r));
+            }
+
+            for (var i = 0; i < _baseObjectsCount; i++)
+            {
+                var r = rnd.Next(2, 30);
+                _baseObjects[i] = new BaseObject(new Point(Width, i * 20), new Point(-1 * r, 0), new Size(10, 10));
+            }
+
+            for (var i = 0; i < _linesCount; i++)
+                _lines[i] = new Line(new Point(rnd.Next(0, Width), rnd.Next(0, Height)), new Point(-50, 0), new Size(20, 0));
+            
+            _BaseObjects = new List<BaseObject>();
+            _BaseObjects.AddRange(_stars);
+            _BaseObjects.AddRange(_lines);
+            _BaseObjects.AddRange(_baseObjects);
         }
         
         public static void Update()
