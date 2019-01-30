@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 
 namespace CompGame.Models
@@ -17,8 +18,11 @@ namespace CompGame.Models
 
         public virtual void Draw()
         {
-            Game.Buffer.Graphics.DrawEllipse(Pens.White, Pos.X, Pos.Y, Size.Width, Size.Height);
-            Game.Buffer.Graphics.DrawImage(Image.FromFile(""), Pos);
+            var meteorOrig = Image.FromFile(@"C:\Users\HP\RiderProjects\CSharp_2\CompGame\Images\meteor_color_small.png",
+                true);
+            var meteor = meteorOrig.GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
+//            Game.Buffer.Graphics.DrawEllipse(Pens.White, Pos.X, Pos.Y, Size.Width, Size.Height);
+            Game.Buffer.Graphics.DrawImage(meteor, Pos);
         }
 
         public virtual void Update()
