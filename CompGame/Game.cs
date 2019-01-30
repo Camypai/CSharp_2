@@ -6,22 +6,17 @@ using CompGame.Models;
 
 namespace CompGame
 {
-    internal static class Game
+    internal class Game : Scene
     {
         private static BufferedGraphicsContext _context;
-        public static BufferedGraphics Buffer;
 
-        public static List<BaseObject> _BaseObjects;
-
-        public static int Width { get; set; }
-        public static int Height { get; set; }
+        private static List<BaseObject> _BaseObjects;
 
         public static void Init(Form form)
         {
             _context = BufferedGraphicsManager.Current;
             var graphics = form.CreateGraphics();
-            Width = form.ClientSize.Width;
-            Height = form.ClientSize.Height;
+            Buffer.Dispose();
             Buffer = _context.Allocate(graphics, new Rectangle(0, 0, Width, Height));
             
             Load();
@@ -31,7 +26,7 @@ namespace CompGame
             timer.Tick += Timer_Tick;
         }
 
-        public static void Draw()
+        private static void Draw()
         {
             #region Подлянка
 
@@ -47,7 +42,7 @@ namespace CompGame
             Buffer.Render();
         }
 
-        public static void Load()
+        private static void Load()
         {
             const int _maxObjectsCount = 30;
             
@@ -83,8 +78,8 @@ namespace CompGame
             _BaseObjects.AddRange(_lines);
             _BaseObjects.AddRange(_baseObjects);
         }
-        
-        public static void Update()
+
+        private static void Update()
         {
             foreach (var baseObject in _BaseObjects)
                 baseObject.Update();
