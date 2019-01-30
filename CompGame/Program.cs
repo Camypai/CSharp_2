@@ -11,9 +11,8 @@ namespace CompGame
                 Width = 800, Height = 600, FormBorderStyle = FormBorderStyle.FixedSingle
             };
 
-            Game.Init(form);
+            SplashScreen.Init(form);
             form.Show();
-            Game.Draw();
             Application.Run(form);
         }
     }
