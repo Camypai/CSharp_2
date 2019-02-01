@@ -15,7 +15,7 @@ namespace CompGame.Models
         /// <param name="pos">Стартовая позиция</param>
         /// <param name="dir">Напрвление</param>
         /// <param name="size">Размер</param>
-        public BaseObject(Point pos, Point dir, Size size)
+        protected BaseObject(Point pos, Point dir, Size size)
         {
             Pos = pos;
             Dir = dir;
@@ -30,10 +30,6 @@ namespace CompGame.Models
         /// <summary>
         /// Обновление положения объекта
         /// </summary>
-        public virtual void Update()
-        {
-            Pos.X = Pos.X + Dir.X;
-            if (Pos.X < 0) Pos.X = Scene.Width + Size.Width;
-        }
+        public abstract void Update();
     }
 }
