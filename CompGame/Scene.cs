@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace CompGame
 {
-    public class Scene
+    public abstract class Scene
     {
         public static BufferedGraphics Buffer;
 
