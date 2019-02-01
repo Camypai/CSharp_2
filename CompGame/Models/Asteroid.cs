@@ -11,15 +11,12 @@ namespace CompGame.Models
         {
             asteroid = Image.FromFile(
                 @"Images\meteor_color_small.png",
-                true);
+                true).GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
         }
         
         public override void Draw()
         {
-            
-            var _asteroid = asteroid.GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
-
-            Scene.Buffer.Graphics.DrawImage(_asteroid, Pos);
+            Scene.Buffer.Graphics.DrawImage(asteroid, Pos);
         }
 
         public override void Update()
