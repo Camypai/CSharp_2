@@ -106,7 +106,7 @@ namespace CompGame
             var _stars = new Star[_starsCount];
             var _lines = new Line[_linesCount];
 
-            var _baseObjects = new BaseObject[_baseObjectsCount];
+            var _asteroids = new Asteroid[_baseObjectsCount];
 
             for (var i = 0; i < _starsCount; i++)
             {
@@ -118,7 +118,7 @@ namespace CompGame
             for (var i = 0; i < _baseObjectsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _baseObjects[i] = new BaseObject(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-1 * r, 0),
+                _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-1 * r, 0),
                     new Size(10 + r, 10 + r));
             }
 
@@ -129,7 +129,7 @@ namespace CompGame
             _BaseObjects = new List<BaseObject>();
             _BaseObjects.AddRange(_stars);
             _BaseObjects.AddRange(_lines);
-            _BaseObjects.AddRange(_baseObjects);
+            _BaseObjects.AddRange(_asteroids);
         }
 
         /// <summary>
