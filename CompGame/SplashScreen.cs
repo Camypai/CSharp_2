@@ -111,14 +111,14 @@ namespace CompGame
             for (var i = 0; i < _starsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _stars[i] = new Star(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-1 * r, 0),
+                _stars[i] = new Star(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
                     new Size(2 + r, 2 + r));
             }
 
             for (var i = 0; i < _baseObjectsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-1 * r, 0),
+                _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
                     new Size(10 + r, 10 + r));
             }
 
