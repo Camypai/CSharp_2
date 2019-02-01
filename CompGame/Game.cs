@@ -12,6 +12,10 @@ namespace CompGame
 
         private static List<BaseObject> _BaseObjects;
 
+        /// <summary>
+        /// Инициализация сцены на форме
+        /// </summary>
+        /// <param name="form">Форна, на которой происходит инициализация</param>
         public static void Init(Form form)
         {
             _context = BufferedGraphicsManager.Current;
@@ -26,6 +30,9 @@ namespace CompGame
             timer.Tick += Timer_Tick;
         }
 
+        /// <summary>
+        /// Отрисовка объектов на сцене
+        /// </summary>
         private static void Draw()
         {
             #region Подлянка
@@ -42,6 +49,9 @@ namespace CompGame
             Buffer.Render();
         }
 
+        /// <summary>
+        /// Загрузка сцены игры
+        /// </summary>
         private static void Load()
         {
             const int _maxObjectsCount = 30;
@@ -79,6 +89,9 @@ namespace CompGame
             _BaseObjects.AddRange(_baseObjects);
         }
 
+        /// <summary>
+        /// Обновление отрисованных объектов на сцене
+        /// </summary>
         private static void Update()
         {
             foreach (var baseObject in _BaseObjects)

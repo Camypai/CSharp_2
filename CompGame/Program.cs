@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace CompGame
 {
@@ -8,7 +9,18 @@ namespace CompGame
         {
             var form = new Form
             {
-                Width = 800, Height = 600, FormBorderStyle = FormBorderStyle.FixedSingle
+                Width = 800, 
+                Height = 600, 
+                FormBorderStyle = FormBorderStyle.FixedSingle,
+                Controls =
+                {
+                    new Label
+                    {
+                        Text = "Горшков Илья; C# level 2",
+                        BackColor = Color.Black,
+                        ForeColor = Color.White
+                    }
+                }
             };
 
             SplashScreen.Init(form);

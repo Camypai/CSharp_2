@@ -9,6 +9,12 @@ namespace CompGame.Models
         protected Point Dir;
         protected Size Size;
 
+        /// <summary>
+        /// Инициализация объекта
+        /// </summary>
+        /// <param name="pos">Стартовая позиция</param>
+        /// <param name="dir">Напрвление</param>
+        /// <param name="size">Размер</param>
         public BaseObject(Point pos, Point dir, Size size)
         {
             Pos = pos;
@@ -16,6 +22,9 @@ namespace CompGame.Models
             Size = size;
         }
 
+        /// <summary>
+        /// Отрисовка объекта
+        /// </summary>
         public virtual void Draw()
         {
             var meteorOrig = Image.FromFile(
@@ -26,6 +35,9 @@ namespace CompGame.Models
             Scene.Buffer.Graphics.DrawImage(meteor, Pos);
         }
 
+        /// <summary>
+        /// Обновление положения объекта
+        /// </summary>
         public virtual void Update()
         {
             Pos.X = Pos.X + Dir.X;
