@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using CompGame.Models;
 
@@ -39,7 +38,8 @@ namespace CompGame
             {
                 foreach (Control control in form.Controls)
                 {
-                    control.Visible = false;
+                    if (control is Button)
+                        control.Visible = false;
                 }
 
                 Game.Init(form);
