@@ -13,7 +13,7 @@ namespace CompGame.Models
         /// Инициализация объекта
         /// </summary>
         /// <param name="pos">Стартовая позиция</param>
-        /// <param name="dir">Напрвление</param>
+        /// <param name="dir">Смещение</param>
         /// <param name="size">Размер</param>
         protected BaseObject(Point pos, Point dir, Size size)
         {
