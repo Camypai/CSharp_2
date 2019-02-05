@@ -11,6 +11,7 @@ namespace CompGame
         private static BufferedGraphicsContext _context;
 
         private static List<BaseObject> _BaseObjects;
+        private static Bullet _bullet;
 
         /// <summary>
         /// Инициализация сцены на форме
@@ -46,6 +47,7 @@ namespace CompGame
             Buffer.Graphics.Clear(Color.Black);
             foreach (var baseObject in _BaseObjects)
                 baseObject.Draw();
+            _bullet.Draw();
             Buffer.Render();
         }
 
@@ -60,12 +62,13 @@ namespace CompGame
 
             var _starsCount = rnd.Next(5, _maxObjectsCount);
             var _linesCount = rnd.Next(3, _maxObjectsCount/2);
-            var _baseObjectsCount = rnd.Next(5, _maxObjectsCount);
+            var _asteroidsCount = rnd.Next(5, _maxObjectsCount);
+            _bullet = new Bullet(new Point(0, 200), new Point(5, 0), new Size(4, 1));
 
             var _stars = new Star[_starsCount];
             var _lines = new Line[_linesCount];
             
-            var _asteroids = new Asteroid[_baseObjectsCount];
+            var _asteroids = new Asteroid[_asteroidsCount];
             
             for (var i = 0; i < _starsCount; i++)
             {
@@ -74,7 +77,7 @@ namespace CompGame
                     new Size(2+r, 2 +r));
             }
 
-            for (var i = 0; i < _baseObjectsCount; i++)
+            for (var i = 0; i < _asteroidsCount; i++)
             {
                 var r = rnd.Next(2, 30);
                 _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0), new Size(10+r, 10+r));
@@ -95,7 +98,16 @@ namespace CompGame
         private static void Update()
         {
             foreach (var baseObject in _BaseObjects)
+            {   
                 baseObject.Update();
+                
+                if (!(baseObject is Asteroid) || !baseObject.Collision(_bullet)) continue;
+                
+                System.Media.SystemSounds.Hand.Play();
+                _bullet.Reload();
+                baseObject.Reload();
+            }
+            _bullet.Update();
         }
         
         private static void Timer_Tick(object sender, EventArgs e)

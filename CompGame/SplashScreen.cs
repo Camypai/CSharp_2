@@ -22,6 +22,10 @@ namespace CompGame
             var graphics = form.CreateGraphics();
             Width = form.ClientSize.Width;
             Height = form.ClientSize.Height;
+
+            if(Width > 1000 || Height > 1000 || Width < 0 || Height < 0)
+                throw new ArgumentOutOfRangeException();
+
             Buffer = _context.Allocate(graphics, new Rectangle(0, 0, Width, Height));
 
             var timer = new Timer {Interval = 100};
@@ -82,7 +86,7 @@ namespace CompGame
         /// <summary>
         /// Отрисовка объектов на сцене
         /// </summary>
-        private static void Draw()
+        public static void Draw()
         {
             Buffer.Graphics.Clear(Color.Black);
             foreach (var baseObject in _BaseObjects)
@@ -93,7 +97,7 @@ namespace CompGame
         /// <summary>
         /// Загрузка сцены игры
         /// </summary>
-        private static void Load()
+        public static void Load()
         {
             const int _maxObjectsCount = 30;
 

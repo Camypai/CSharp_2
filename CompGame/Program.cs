@@ -9,7 +9,7 @@ namespace CompGame
         {
             var form = new Form
             {
-                Width = 800, 
+                Width = 800,
                 Height = 600, 
                 FormBorderStyle = FormBorderStyle.FixedSingle,
                 Controls =
@@ -25,6 +25,7 @@ namespace CompGame
 
             SplashScreen.Init(form);
             form.Show();
+            SplashScreen.Load();
             Application.Run(form);
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 
 namespace CompGame.Models
@@ -18,7 +19,12 @@ namespace CompGame.Models
         {
             // Заменил минус на плюс, потому что двигались они в другую сторону
             Pos.X = Pos.X + Dir.X;
-            if (Pos.X < 0) Pos.X = Scene.Width + Size.Width;
+            if (Pos.X < 0) Reload();
+        }
+
+        public override void Reload()
+        {
+            Pos = new Point(Scene.Width, new Random().Next(Scene.Height));
         }
     }
 }
