@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using CompGame.Models;
 
@@ -12,10 +13,8 @@ namespace CompGame
 
         private static List<BaseObject> _baseObjects;
         private static Bullet _bullet;
-        private static readonly Ship Ship = new Ship(new Point(10, 400), new Point(5, 5), new Size(10, 10));
+        private static readonly Ship Ship = new Ship(new Point(10, 400), new Point(5, 5), new Size(10, 10), Message);
         private static readonly Timer Timer = new Timer();
-
-        public static Random Rnd = new Random();
 
         /// <summary>
         /// Инициализация сцены на форме
@@ -37,6 +36,22 @@ namespace CompGame
             Ship.MessageDie += Finish;
             Timer.Start();
         }
+        
+        /// <summary>
+        /// Метод логгирования
+        /// </summary>
+        /// <param name="o">Источник</param>
+        /// <param name="message">Сообщение</param>
+        private static void Message(object o, string message)
+        {
+            var m = $"{o}: {message}";
+            Console.WriteLine(m);
+
+            using (var sw = new StreamWriter("log.txt", true))
+            {
+                sw.WriteLine(m);
+            }
+        }
 
         /// <summary>
         /// Отрисовка объектов на сцене
@@ -57,7 +72,10 @@ namespace CompGame
             _bullet?.Draw();
             Ship?.Draw();
             if (Ship != null)
-                Buffer.Graphics.DrawString("Energy:" + Ship.Energy, SystemFonts.DefaultFont, Brushes.White, 0, 0);
+            {
+                Buffer.Graphics.DrawString("Energy:" + Ship.Energy, SystemFonts.DefaultFont, Brushes.White, 0, 50);
+                Buffer.Graphics.DrawString("Score:" + Ship.Score, SystemFonts.DefaultFont, Brushes.White, 0, 70);
+            }
             Buffer.Render();
         }
 
@@ -73,35 +91,44 @@ namespace CompGame
             var _starsCount = rnd.Next(5, _maxObjectsCount);
             var _linesCount = rnd.Next(3, _maxObjectsCount / 2);
             var _asteroidsCount = rnd.Next(5, _maxObjectsCount);
-//            _bullet = new Bullet(new Point(0, 200), new Point(5, 0), new Size(4, 1));
+            var _kitCount = 5;
 
             var _stars = new Star[_starsCount];
             var _lines = new Line[_linesCount];
+            var _kits = new Kit[_kitCount];
 
             var _asteroids = new Asteroid[_asteroidsCount];
+            
+            for (var i = 0; i < _kitCount; i++)
+            {
+                var r = rnd.Next(2, 30);
+                _kits[i] = new Kit(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
+                    new Size(5, 5), Message);
+            }
 
             for (var i = 0; i < _starsCount; i++)
             {
                 var r = rnd.Next(2, 30);
                 _stars[i] = new Star(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(2 + r, 2 + r));
+                    new Size(2 + r, 2 + r), Message);
             }
 
             for (var i = 0; i < _asteroidsCount; i++)
             {
                 var r = rnd.Next(2, 30);
                 _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(10 + r, 10 + r));
+                    new Size(10 + r, 10 + r), Message);
             }
 
             for (var i = 0; i < _linesCount; i++)
                 _lines[i] = new Line(new Point(rnd.Next(0, Width), rnd.Next(0, Height)), new Point(-80, 0),
-                    new Size(20, 0));
+                    new Size(20, 0), Message);
 
             _baseObjects = new List<BaseObject>();
             _baseObjects.AddRange(_stars);
             _baseObjects.AddRange(_lines);
             _baseObjects.AddRange(_asteroids);
+            _baseObjects.AddRange(_kits);
         }
 
         /// <summary>
@@ -112,16 +139,28 @@ namespace CompGame
             foreach (var baseObject in _baseObjects)
             {
                 baseObject.Update();
+                if (!(baseObject is Asteroid) && !(baseObject is Kit)) continue;
 
-                if (_bullet == null || !(baseObject is Asteroid) | !baseObject.Collision(_bullet)) continue;
+                if (baseObject is Kit kit)
+                {
+                    if (!Ship.Collision(baseObject)) continue;
+                    Ship?.EnergyChange(kit.Power);
+                    kit.Reload();
+                }
 
-                System.Media.SystemSounds.Hand.Play();
-                _bullet = null;
-                baseObject.Reload();
+                if (_bullet != null && baseObject.Collision(_bullet))
+                {
+                    System.Media.SystemSounds.Hand.Play();
+                    _bullet = null;
+                    Ship.ScoreAdd();
+                    baseObject.Die();
+                    continue;
+                }
 
-                if (!Ship.Collision((baseObject as Asteroid))) continue;
+                if (!Ship.Collision(baseObject)) continue;
                 var rnd = new Random();
-                Ship?.EnergyLow(rnd.Next(1, 10));
+                Ship?.EnergyChange(-rnd.Next(1, 10));
+                baseObject.Die();
                 System.Media.SystemSounds.Asterisk.Play();
                 if (Ship.Energy <= 0) Ship?.Die();
             }
@@ -129,6 +168,9 @@ namespace CompGame
             _bullet?.Update();
         }
 
+        /// <summary>
+        /// Конец игры
+        /// </summary>
         public static void Finish()
         {
             Timer.Stop();
@@ -137,19 +179,29 @@ namespace CompGame
             Buffer.Render();
         }
 
+        /// <summary>
+        /// Подписка на каждый тик таймера
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Timer_Tick(object sender, EventArgs e)
         {
             Draw();
             Update();
         }
 
+        /// <summary>
+        /// Подписка на нажатие клавиш
+        /// </summary>
+        /// <param name="sender">Источник</param>
+        /// <param name="e">Событие нажатия клавиш</param>
         private static void Form_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
                 case Keys.Space:
-                    _bullet = new Bullet(new Point(Ship.Rectangle.X + 10, Ship.Rectangle.Y + 4), new Point(4, 0),
-                        new Size(4, 1));
+                    _bullet = new Bullet(new Point(Ship.Rectangle.X + 10, Ship.Rectangle.Y + 4), new Point(6, 0),
+                        new Size(4, 1), Message);
                     break;
                 case Keys.Up:
                     Ship.Up();
