@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using CompGame.Models;
 
@@ -82,6 +83,17 @@ namespace CompGame
 
             timer.Tick += Timer_Tick;
         }
+        
+        private static void Message(object o, string message)
+        {
+            var m = $"{o}: {message}";
+            Console.WriteLine(m);
+
+            using (var sw = new StreamWriter("log.txt", true))
+            {
+                sw.WriteLine(m);
+            }
+        }
 
         /// <summary>
         /// Отрисовка объектов на сцене
@@ -116,19 +128,19 @@ namespace CompGame
             {
                 var r = rnd.Next(2, 30);
                 _stars[i] = new Star(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(2 + r, 2 + r));
+                    new Size(2 + r, 2 + r), Message);
             }
 
             for (var i = 0; i < _baseObjectsCount; i++)
             {
                 var r = rnd.Next(2, 30);
                 _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(10 + r, 10 + r));
+                    new Size(10 + r, 10 + r), Message);
             }
 
             for (var i = 0; i < _linesCount; i++)
                 _lines[i] = new Line(new Point(rnd.Next(0, Width), rnd.Next(0, Height)), new Point(-80, -i),
-                    new Size(20, 0));
+                    new Size(20, 0), Message);
 
             _BaseObjects = new List<BaseObject>();
             _BaseObjects.AddRange(_stars);
@@ -145,6 +157,11 @@ namespace CompGame
                 baseObject.Update();
         }
 
+        /// <summary>
+        /// Подписка на каждый тик таймера
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Timer_Tick(object sender, EventArgs e)
         {
             Draw();
