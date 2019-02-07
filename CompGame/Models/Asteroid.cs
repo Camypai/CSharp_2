@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace CompGame.Models
 {
-    public class Asteroid : BaseObject, ICloneable, IComparable<Asteroid>
+    public class Asteroid : BaseObject, IComparable<Asteroid>
     {
         /// <summary>
         /// Изображение
@@ -15,12 +15,20 @@ namespace CompGame.Models
         /// </summary>
         public int Power { get; set; } = 3;
 
-        public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
+        /// <summary>
+        /// Инициализация астероида
+        /// </summary>
+        /// <param name="pos">Позиция</param>
+        /// <param name="dir">Смещение</param>
+        /// <param name="size">Размер</param>
+        /// <param name="log">Метод логгирования</param>
+        public Asteroid(Point pos, Point dir, Size size, EventHandler<string> log) : base(pos, dir, size, log)
         {
             _asteroid = Image.FromFile(
                 @"Images\meteor_color_small.png",
                 true).GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
             Power = 1;
+            Logging(this, "Создан");
         }
 
         /// <summary>
@@ -29,6 +37,7 @@ namespace CompGame.Models
         public override void Draw()
         {
             Scene.Buffer.Graphics.DrawImage(_asteroid, Pos);
+            Logging(this, "Отрисован");
         }
 
         /// <summary>
@@ -38,6 +47,7 @@ namespace CompGame.Models
         {
             Pos.X = Pos.X + Dir.X;
             if (Pos.X < 0) Reload();
+            Logging(this, "Изменилось положение");
         }
 
         /// <summary>
@@ -46,20 +56,16 @@ namespace CompGame.Models
         public override void Reload()
         {
             Pos = new Point(Scene.Width, new Random().Next(Scene.Height));
+            Logging(this, "Перезагрузка");
         }
 
         /// <summary>
-        /// Клонирование экземпляра
+        /// Уничтожение астероида
         /// </summary>
-        /// <returns>Новый экземпляр</returns>
-        public object Clone()
+        public override void Die()
         {
-            var asteroid = new Asteroid(new Point(Pos.X, Pos.Y), new Point(Dir.X, Dir.Y),
-                new Size(Size.Width, Size.Height))
-            {
-                Power = Power
-            };
-            return asteroid;
+            Pos = new Point(Scene.Width, new Random().Next(Scene.Height));
+            Logging(this, "Уничтожен");
         }
 
         /// <summary>
