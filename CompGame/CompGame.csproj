@@ -46,6 +46,7 @@
     <Compile Include="Models\Asteroid.cs" />
     <Compile Include="Models\BaseObject.cs" />
     <Compile Include="Models\Bullet.cs" />
+    <Compile Include="Models\Kit.cs" />
     <Compile Include="Models\Line.cs" />
     <Compile Include="Models\Ship.cs" />
     <Compile Include="Models\Star.cs" />
