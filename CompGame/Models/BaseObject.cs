@@ -12,6 +12,7 @@ namespace CompGame.Models
         protected Size Size;
 
         public Rectangle Rectangle => new Rectangle(Pos, Size);
+        public delegate void Message();
 
         /// <summary>
         /// Инициализация объекта

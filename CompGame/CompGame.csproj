@@ -47,6 +47,7 @@
     <Compile Include="Models\BaseObject.cs" />
     <Compile Include="Models\Bullet.cs" />
     <Compile Include="Models\Line.cs" />
+    <Compile Include="Models\Ship.cs" />
     <Compile Include="Models\Star.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
