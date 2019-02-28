@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using CompGame.Models;
 
@@ -12,9 +13,11 @@ namespace CompGame
         private static BufferedGraphicsContext _context;
 
         private static List<BaseObject> _baseObjects;
-        private static Bullet _bullet;
+        private static List<Bullet> _bullets = new List<Bullet>();
+        private static List<Asteroid> _asteroids = new List<Asteroid>();
         private static readonly Ship Ship = new Ship(new Point(10, 400), new Point(5, 5), new Size(10, 10), Message);
         private static readonly Timer Timer = new Timer();
+        private static int _asteroidsCount = 5;
 
         /// <summary>
         /// Инициализация сцены на форме
@@ -69,7 +72,10 @@ namespace CompGame
             Buffer.Graphics.Clear(Color.Black);
             foreach (var baseObject in _baseObjects)
                 baseObject.Draw();
-            _bullet?.Draw();
+            
+            foreach(var bullet in _bullets) bullet.Draw();
+            foreach (var asteroid in _asteroids) asteroid.Draw();
+            
             Ship?.Draw();
             if (Ship != null)
             {
@@ -90,14 +96,14 @@ namespace CompGame
 
             var _starsCount = rnd.Next(5, _maxObjectsCount);
             var _linesCount = rnd.Next(3, _maxObjectsCount / 2);
-            var _asteroidsCount = rnd.Next(5, _maxObjectsCount);
+            
             var _kitCount = 5;
 
             var _stars = new Star[_starsCount];
             var _lines = new Line[_linesCount];
             var _kits = new Kit[_kitCount];
 
-            var _asteroids = new Asteroid[_asteroidsCount];
+//            var _asteroids = new Asteroid[_asteroidsCount];
             
             for (var i = 0; i < _kitCount; i++)
             {
@@ -116,8 +122,8 @@ namespace CompGame
             for (var i = 0; i < _asteroidsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(10 + r, 10 + r), Message);
+                _asteroids.Add(new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
+                    new Size(10 + r, 10 + r), Message));
             }
 
             for (var i = 0; i < _linesCount; i++)
@@ -127,7 +133,7 @@ namespace CompGame
             _baseObjects = new List<BaseObject>();
             _baseObjects.AddRange(_stars);
             _baseObjects.AddRange(_lines);
-            _baseObjects.AddRange(_asteroids);
+//            _baseObjects.AddRange(_asteroids);
             _baseObjects.AddRange(_kits);
         }
 
@@ -135,37 +141,55 @@ namespace CompGame
         /// Обновление отрисованных объектов на сцене
         /// </summary>
         private static void Update()
-        {
-            foreach (var baseObject in _baseObjects)
+        {   
+            for (var i = 0; i < _bullets.Count; i++)
             {
-                baseObject.Update();
-                if (!(baseObject is Asteroid) && !(baseObject is Kit)) continue;
-
-                if (baseObject is Kit kit)
+                for (var j = 0; j < _asteroids.Count; j++)
                 {
-                    if (!Ship.Collision(baseObject)) continue;
-                    Ship?.EnergyChange(kit.Power);
-                    kit.Reload();
-                }
-
-                if (_bullet != null && baseObject.Collision(_bullet))
-                {
+                    if (_bullets[i] == null || !_asteroids[j].Collision(_bullets[i])) continue;
+                    
                     System.Media.SystemSounds.Hand.Play();
-                    _bullet = null;
+                    _bullets.RemoveAt(i);
                     Ship.ScoreAdd();
-                    baseObject.Die();
-                    continue;
+                    _asteroids.RemoveAt(j);
                 }
+            }
 
-                if (!Ship.Collision(baseObject)) continue;
+            for (var i = 0; i < _asteroids.Count; i++)
+            {
+                if (!Ship.Collision(_asteroids[i])) continue;
                 var rnd = new Random();
                 Ship?.EnergyChange(-rnd.Next(1, 10));
-                baseObject.Die();
+                _asteroids.RemoveAt(i);
                 System.Media.SystemSounds.Asterisk.Play();
                 if (Ship.Energy <= 0) Ship?.Die();
             }
 
-            _bullet?.Update();
+            if (!_asteroids.Any())
+            {
+                var rnd = new Random();
+                _asteroidsCount++;
+                for (var i = 0; i < _asteroidsCount; i++)
+                {
+                    var r = rnd.Next(2, 30);
+                    _asteroids.Add(new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
+                        new Size(10 + r, 10 + r), Message));
+                }
+            }
+            
+            foreach (var baseObject in _baseObjects)
+            {
+                baseObject.Update();
+
+                if (!(baseObject is Kit kit)) continue;
+                
+                if (!Ship.Collision(kit)) continue;
+                Ship?.EnergyChange(kit.Power);
+                kit.Reload();
+            }
+
+            foreach(var bullet in _bullets) bullet.Update();
+            foreach (var asteroid in _asteroids) asteroid.Update(); 
         }
 
         /// <summary>
@@ -200,8 +224,8 @@ namespace CompGame
             switch (e.KeyCode)
             {
                 case Keys.Space:
-                    _bullet = new Bullet(new Point(Ship.Rectangle.X + 10, Ship.Rectangle.Y + 4), new Point(6, 0),
-                        new Size(4, 1), Message);
+                    _bullets.Add(new Bullet(new Point(Ship.Rectangle.X + 10, Ship.Rectangle.Y + 4), new Point(6, 0),
+                        new Size(4, 1), Message));
                     break;
                 case Keys.Up:
                     Ship.Up();
