@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using CompGame.Interfaces;
 
 namespace CompGame.Models
 {
@@ -7,6 +8,8 @@ namespace CompGame.Models
     {
 
         private bool disposed = false;
+        private ILog _log = new ConsoleLog<Bullet>();
+        
         /// <inheritdoc />
         /// <summary>
         /// Инициализация пули
@@ -15,9 +18,9 @@ namespace CompGame.Models
         /// <param name="dir">Смещение</param>
         /// <param name="size">Размер</param>
         /// <param name="log">Метод логгирования</param>
-        public Bullet(Point pos, Point dir, Size size, EventHandler<string> log) : base(pos, dir, size, log)
+        public Bullet(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
-            Logging(this, "Создан");
+//            _log.Write("Создан");
         }
 
         /// <inheritdoc />
@@ -27,7 +30,7 @@ namespace CompGame.Models
         public override void Draw()
         {
             Scene.Buffer.Graphics.DrawRectangle(Pens.OrangeRed, Pos.X, Pos.Y, Size.Width, Size.Height);
-            Logging(this, "Отрисован");
+//            _log.Write("Отрисован");
         }
 
         /// <inheritdoc />
@@ -38,7 +41,7 @@ namespace CompGame.Models
         {
             Pos.X = Pos.X + 3;
             if(Pos.X > Scene.Width) Die();
-            Logging(this, "изменилось положение");
+//            _log.Write("изменилось положение");
         }
 
         /// <inheritdoc />
@@ -48,7 +51,7 @@ namespace CompGame.Models
         public override void Reload()
         {
             Pos.X = 0;
-            Logging(this, "Перезагрузка");
+            _log.Write("Перезагрузка");
         }
 
         /// <inheritdoc />
@@ -79,7 +82,9 @@ namespace CompGame.Models
             {
                 if (disposing)
                 {
-                    Dir.X = 0;
+                    Dir = Point.Empty;
+                    Size = Size.Empty;
+                    _log.Write("Отчистка объекта");
                 }
                 
                 disposed = true;
@@ -91,6 +96,7 @@ namespace CompGame.Models
         /// </summary>
         ~Bullet()
         {
+            _log.Write("Вызов деструктора");
             Dispose(false);
             System.Media.SystemSounds.Beep.Play();
         }

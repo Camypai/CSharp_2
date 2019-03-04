@@ -1,10 +1,13 @@
 using System;
 using System.Drawing;
+using CompGame.Interfaces;
 
 namespace CompGame.Models
 {
     public class Kit : BaseObject
     {
+        private ILog _log = new ConsoleLog<Kit>();
+        
         /// <summary>
         /// Колличество восполняемой энергии корабля
         /// </summary>
@@ -17,9 +20,9 @@ namespace CompGame.Models
         /// <param name="dir">Смещение</param>
         /// <param name="size">Размер</param>
         /// <param name="log">Метод логгирования</param>
-        public Kit(Point pos, Point dir, Size size, EventHandler<string> log) : base(pos, dir, size, log)
+        public Kit(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
-            Logging(this, "Создан");
+//            _log.Write("Создан");
         }
 
         /// <summary>
@@ -28,7 +31,7 @@ namespace CompGame.Models
         public override void Draw()
         {
             Scene.Buffer.Graphics.DrawRectangle(Pens.PaleGreen, Pos.X, Pos.Y, Size.Width, Size.Height);
-            Logging(this, "Отрисован");
+//            _log.Write("Отрисован");
         }
 
         /// <summary>
@@ -38,7 +41,7 @@ namespace CompGame.Models
         {
             Pos.X = Pos.X + Dir.X;
             if (Pos.X < 0) Reload();
-            Logging(this, "Изменилось положение");
+//            _log.Write("Изменилось положение");
         }
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace CompGame.Models
         public override void Reload()
         {
             Pos = new Point(Scene.Width, new Random().Next(Scene.Height));
-            Logging(this, "Перезагрузка");
+            _log.Write("Перезагрузка");
         }
     }
 }

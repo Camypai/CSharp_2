@@ -1,10 +1,13 @@
 using System;
 using System.Drawing;
+using CompGame.Interfaces;
 
 namespace CompGame.Models
 {
     public class Star : BaseObject
     {
+        private ILog _log = new ConsoleLog<Star>();
+        
         /// <summary>
         /// Инициализация звезды
         /// </summary>
@@ -12,9 +15,9 @@ namespace CompGame.Models
         /// <param name="dir">Смещение</param>
         /// <param name="size">Размер</param>
         /// <param name="log">Метод логгирования</param>
-        public Star(Point pos, Point dir, Size size, EventHandler<string> log) : base(pos, dir, size, log)
+        public Star(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
-            Logging(this, "Создан");
+//            _log.Write("Создан");
         }
 
         /// <summary>
@@ -24,7 +27,7 @@ namespace CompGame.Models
         {
             Scene.Buffer.Graphics.DrawLine(Pens.White, Pos.X, Pos.Y, Pos.X + Size.Width, Pos.Y + Size.Height);
             Scene.Buffer.Graphics.DrawLine(Pens.White, Pos.X + Size.Width, Pos.Y, Pos.X, Pos.Y + Size.Height);
-            Logging(this, "Отрисован");
+//            _log.Write("Отрисован");
         }
 
         /// <summary>
@@ -35,7 +38,7 @@ namespace CompGame.Models
             // Заменил минус на плюс, потому что двигались они в другую сторону
             Pos.X = Pos.X + Dir.X;
             if (Pos.X < 0) Reload();
-            Logging(this, "Изменилось положение");
+//            _log.Write("Изменилось положение");
         }
 
         /// <summary>
@@ -44,7 +47,7 @@ namespace CompGame.Models
         public override void Reload()
         {
             Pos = new Point(Scene.Width, new Random().Next(Scene.Height));
-            Logging(this, "Перезагрузка");
+            _log.Write("Перезагрузка");
         }
     }
 }

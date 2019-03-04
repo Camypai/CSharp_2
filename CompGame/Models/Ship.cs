@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using CompGame.Interfaces;
 
 namespace CompGame.Models
 {
@@ -9,6 +10,8 @@ namespace CompGame.Models
         /// Энергия корабля (Здоровье)
         /// </summary>
         private int _energy = 100;
+
+        private ILog _log = new ConsoleLog<Ship>();
 
         public int Energy
         {
@@ -32,9 +35,9 @@ namespace CompGame.Models
         /// <param name="dir">Смещение</param>
         /// <param name="size">Размер</param>
         /// <param name="log">Метод логгирования</param>
-        public Ship(Point pos, Point dir, Size size, EventHandler<string> log) : base(pos, dir, size, log)
+        public Ship(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
-            Logging(this, "Создан");
+//            _log.Write("Создан");
         }
 
         /// <summary>
@@ -43,7 +46,9 @@ namespace CompGame.Models
         public override void Draw()
         {
             Scene.Buffer.Graphics.FillEllipse(Brushes.Wheat, Pos.X, Pos.Y, Size.Width, Size.Height);
-            Logging(this, "Отрисован");
+            Scene.Buffer.Graphics.DrawString("Energy:" + Energy, SystemFonts.DefaultFont, Brushes.White, 0, 50);
+            Scene.Buffer.Graphics.DrawString("Score:" + Score, SystemFonts.DefaultFont, Brushes.White, 0, 70);
+//            _log.Write("Отрисован");
         }
 
         /// <summary>
@@ -71,7 +76,7 @@ namespace CompGame.Models
         public void EnergyChange(int n)
         {
             Energy += n;
-            Logging(this, $"Изменился запас энергии: {n}");
+            _log.Write($"Изменился запас энергии: {n}");
         }
         
         /// <summary>
@@ -80,7 +85,7 @@ namespace CompGame.Models
         public void ScoreAdd()
         {
             Score++;
-            Logging(this, $"Астероид сбит");
+            _log.Write($"Астероид сбит");
         }
         
         /// <summary>
@@ -89,7 +94,7 @@ namespace CompGame.Models
         public void Up()
         {
             if (Pos.Y > 0) Pos.Y = Pos.Y - Dir.Y;
-            Logging(this, "Поднялся");
+            _log.Write("Поднялся");
         }
         
         /// <summary>
@@ -98,7 +103,7 @@ namespace CompGame.Models
         public void Down()
         {
             if (Pos.Y < Scene.Height) Pos.Y = Pos.Y + Dir.Y;
-            Logging(this, "Опустился");
+            _log.Write("Опустился");
         }
         
         /// <summary>
@@ -107,7 +112,7 @@ namespace CompGame.Models
         public override void Die()
         {
             MessageDie?.Invoke();
-            Logging(this, "Умер");
+            _log.Write("Умер");
         }
     }
 }

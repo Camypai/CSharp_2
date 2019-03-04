@@ -31,10 +31,6 @@ namespace CompGame.Models
         /// </summary>
         public delegate void Message();
 
-        /// <summary>
-        /// Событие логгирования
-        /// </summary>
-        public static event EventHandler<string> Log; 
 
         /// <summary>
         /// Инициализация объекта
@@ -42,7 +38,7 @@ namespace CompGame.Models
         /// <param name="pos">Стартовая позиция</param>
         /// <param name="dir">Смещение</param>
         /// <param name="size">Размер</param>
-        protected BaseObject(Point pos, Point dir, Size size, EventHandler<string> log)
+        protected BaseObject(Point pos, Point dir, Size size)
         {
             if (pos.X < 0 || pos.Y < 0 || pos.X > Scene.Width || pos.Y > Scene.Height)
             {
@@ -62,7 +58,6 @@ namespace CompGame.Models
             Pos = pos;
             Dir = dir;
             Size = size;
-            Log = log;
         }
 
         /// <summary>
@@ -76,7 +71,7 @@ namespace CompGame.Models
         public abstract void Update();
 
         /// <summary>
-        /// Провека на соллизию
+        /// Провека на коллизию
         /// </summary>
         /// <param name="collision">Объект проверки</param>
         /// <returns></returns>
@@ -97,16 +92,6 @@ namespace CompGame.Models
         public virtual void Die()
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Логгирование
-        /// </summary>
-        /// <param name="o">Источник</param>
-        /// <param name="message">Сообщение</param>
-        public static void Logging(object o,string message)
-        {
-            Log?.Invoke(o, message);
         }
     }
 }

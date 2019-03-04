@@ -20,7 +20,7 @@ namespace CompGame
         /// <summary>
         /// Инициализация сцены на форме
         /// </summary>
-        /// <param name="form">Форна, на которой происходит инициализация</param>
+        /// <param name="form">Форма, на которой происходит инициализация</param>
         public static void Init(Form form)
         {
             _context = BufferedGraphicsManager.Current;
@@ -86,17 +86,6 @@ namespace CompGame
             Load();
 
             timer.Tick += Timer_Tick;
-        }
-        
-        private static void Message(object o, string message)
-        {
-            var m = $"{o}: {message}";
-            Console.WriteLine(m);
-
-            using (var sw = new StreamWriter("log.txt", true))
-            {
-                sw.WriteLine(m);
-            }
         }
 
         /// <summary>
