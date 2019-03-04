@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using CompGame.Models;
 
@@ -11,11 +12,15 @@ namespace CompGame
         private static BufferedGraphicsContext _context;
 
         private static List<BaseObject> _BaseObjects;
+        
+        private static readonly StarCreator StarCreator = new StarCreator();
+        private static readonly AsteroidCreator AsteroidCreator = new AsteroidCreator();
+        private static readonly LineCreator LineCreator = new LineCreator();
 
         /// <summary>
         /// Инициализация сцены на форме
         /// </summary>
-        /// <param name="form">Форна, на которой происходит инициализация</param>
+        /// <param name="form">Форма, на которой происходит инициализация</param>
         public static void Init(Form form)
         {
             _context = BufferedGraphicsManager.Current;
@@ -115,20 +120,17 @@ namespace CompGame
             for (var i = 0; i < _starsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _stars[i] = new Star(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(2 + r, 2 + r));
+                _stars[i] = StarCreator.Create(rnd);
             }
 
             for (var i = 0; i < _baseObjectsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(10 + r, 10 + r));
+                _asteroids[i] = AsteroidCreator.Create(rnd);
             }
 
             for (var i = 0; i < _linesCount; i++)
-                _lines[i] = new Line(new Point(rnd.Next(0, Width), rnd.Next(0, Height)), new Point(-80, -i),
-                    new Size(20, 0));
+                _lines[i] = LineCreator.Create(rnd);
 
             _BaseObjects = new List<BaseObject>();
             _BaseObjects.AddRange(_stars);
@@ -145,6 +147,11 @@ namespace CompGame
                 baseObject.Update();
         }
 
+        /// <summary>
+        /// Подписка на каждый тик таймера
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Timer_Tick(object sender, EventArgs e)
         {
             Draw();

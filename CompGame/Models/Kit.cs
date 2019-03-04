@@ -4,33 +4,38 @@ using CompGame.Interfaces;
 
 namespace CompGame.Models
 {
-    public class Line : BaseObject
+    public class Kit : BaseObject
     {
-        private ILog _log = new ConsoleLog<Line>();
+        private ILog _log = new ConsoleLog<Kit>();
         
         /// <summary>
-        /// Инициализация линии
+        /// Колличество восполняемой энергии корабля
+        /// </summary>
+        public int Power { get; } = 3;
+        
+        /// <summary>
+        /// Инициализация аптечки
         /// </summary>
         /// <param name="pos">Позиция</param>
         /// <param name="dir">Смещение</param>
         /// <param name="size">Размер</param>
         /// <param name="log">Метод логгирования</param>
-        public Line(Point pos, Point dir, Size size) : base(pos, dir, size)
+        public Kit(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
 //            _log.Write("Создан");
         }
 
         /// <summary>
-        /// Отрисовка линии
+        /// Отрисовка аптечки
         /// </summary>
         public override void Draw()
         {
-            Scene.Buffer.Graphics.DrawLine(Pens.White, Pos.X, Pos.Y, Pos.X + Size.Width, Pos.Y);
+            Scene.Buffer.Graphics.DrawRectangle(Pens.PaleGreen, Pos.X, Pos.Y, Size.Width, Size.Height);
 //            _log.Write("Отрисован");
         }
 
         /// <summary>
-        /// Изменение положения линии
+        /// Изменение положения аптечки
         /// </summary>
         public override void Update()
         {
@@ -40,12 +45,12 @@ namespace CompGame.Models
         }
 
         /// <summary>
-        /// Перезагрузка объекта линии
+        /// Перезагрузка объекта аптечки
         /// </summary>
         public override void Reload()
         {
             Pos = new Point(Scene.Width, new Random().Next(Scene.Height));
-            _log.Write("Перегазрузка");
+            _log.Write("Перезагрузка");
         }
     }
 }
