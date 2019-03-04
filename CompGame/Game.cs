@@ -18,6 +18,13 @@ namespace CompGame
         private static readonly Ship Ship = new Ship(new Point(10, 400), new Point(5, 5), new Size(10, 10), Message);
         private static readonly Timer Timer = new Timer();
         private static int _asteroidsCount = 5;
+        private static readonly StarCreator StarCreator = new StarCreator();
+        private static readonly KitCreator KitCreator = new KitCreator();
+        private static readonly AsteroidCreator AsteroidCreator = new AsteroidCreator();
+        private static readonly LineCreator LineCreator = new LineCreator();
+        private static readonly ShipCreator ShipCreator = new ShipCreator();
+        private static readonly Ship Ship = ShipCreator.Create();
+        private static readonly BulletCreator BulletCreator = new BulletCreator(Ship);
 
         /// <summary>
         /// Инициализация сцены на форме
@@ -106,29 +113,16 @@ namespace CompGame
 //            var _asteroids = new Asteroid[_asteroidsCount];
             
             for (var i = 0; i < _kitCount; i++)
-            {
-                var r = rnd.Next(2, 30);
-                _kits[i] = new Kit(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(5, 5), Message);
-            }
+                _kits[i] = KitCreator.Create(rnd);
 
             for (var i = 0; i < _starsCount; i++)
-            {
-                var r = rnd.Next(2, 30);
-                _stars[i] = new Star(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(2 + r, 2 + r), Message);
-            }
+                _stars[i] = StarCreator.Create(rnd);
 
             for (var i = 0; i < _asteroidsCount; i++)
-            {
-                var r = rnd.Next(2, 30);
-                _asteroids.Add(new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(10 + r, 10 + r), Message));
-            }
+                Asteroids.Add(AsteroidCreator.Create(rnd));
 
             for (var i = 0; i < _linesCount; i++)
-                _lines[i] = new Line(new Point(rnd.Next(0, Width), rnd.Next(0, Height)), new Point(-80, 0),
-                    new Size(20, 0), Message);
+                _lines[i] = LineCreator.Create(rnd);
 
             _baseObjects = new List<BaseObject>();
             _baseObjects.AddRange(_stars);
@@ -170,11 +164,7 @@ namespace CompGame
                 var rnd = new Random();
                 _asteroidsCount++;
                 for (var i = 0; i < _asteroidsCount; i++)
-                {
-                    var r = rnd.Next(2, 30);
-                    _asteroids.Add(new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                        new Size(10 + r, 10 + r), Message));
-                }
+                    Asteroids.Add(AsteroidCreator.Create(rnd));
             }
             
             foreach (var baseObject in _baseObjects)
@@ -224,8 +214,7 @@ namespace CompGame
             switch (e.KeyCode)
             {
                 case Keys.Space:
-                    _bullets.Add(new Bullet(new Point(Ship.Rectangle.X + 10, Ship.Rectangle.Y + 4), new Point(6, 0),
-                        new Size(4, 1), Message));
+                    Bullets.Add(BulletCreator.Create());
                     break;
                 case Keys.Up:
                     Ship.Up();

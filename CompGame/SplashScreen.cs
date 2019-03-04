@@ -12,6 +12,10 @@ namespace CompGame
         private static BufferedGraphicsContext _context;
 
         private static List<BaseObject> _BaseObjects;
+        
+        private static readonly StarCreator StarCreator = new StarCreator();
+        private static readonly AsteroidCreator AsteroidCreator = new AsteroidCreator();
+        private static readonly LineCreator LineCreator = new LineCreator();
 
         /// <summary>
         /// Инициализация сцены на форме
@@ -127,20 +131,17 @@ namespace CompGame
             for (var i = 0; i < _starsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _stars[i] = new Star(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(2 + r, 2 + r), Message);
+                _stars[i] = StarCreator.Create(rnd);
             }
 
             for (var i = 0; i < _baseObjectsCount; i++)
             {
                 var r = rnd.Next(2, 30);
-                _asteroids[i] = new Asteroid(new Point(rnd.Next(Width), rnd.Next(0, Height)), new Point(-r, 0),
-                    new Size(10 + r, 10 + r), Message);
+                _asteroids[i] = AsteroidCreator.Create(rnd);
             }
 
             for (var i = 0; i < _linesCount; i++)
-                _lines[i] = new Line(new Point(rnd.Next(0, Width), rnd.Next(0, Height)), new Point(-80, -i),
-                    new Size(20, 0), Message);
+                _lines[i] = LineCreator.Create(rnd);
 
             _BaseObjects = new List<BaseObject>();
             _BaseObjects.AddRange(_stars);
