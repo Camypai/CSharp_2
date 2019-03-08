@@ -84,6 +84,7 @@ namespace CompGame.Models
                 {
                     Dir = Point.Empty;
                     Size = Size.Empty;
+                    Pos = Point.Empty;
                     _log.Write("Отчистка объекта");
                 }
                 

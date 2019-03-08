@@ -14,11 +14,11 @@ namespace CompGame
         private static BufferedGraphicsContext _context;
 
         private static ILog _log = new ConsoleLog<Game>();
-        
+
         private static List<BaseObject> _baseObjects;
         private static readonly List<Bullet> Bullets = new List<Bullet>();
         private static readonly List<Asteroid> Asteroids = new List<Asteroid>();
-        private static readonly Timer Timer = new Timer();
+        private static readonly Timer Timer = new Timer{Interval = 40};
         private static int _asteroidsCount = 5;
         private static readonly StarCreator StarCreator = new StarCreator();
         private static readonly KitCreator KitCreator = new KitCreator();
@@ -41,7 +41,7 @@ namespace CompGame
             Buffer = _context.Allocate(graphics, new Rectangle(0, 0, Width, Height));
 
             Load();
-            
+
             form.Focus();
             form.KeyPreview = true;
             form.KeyDown += Form_KeyDown;
@@ -73,10 +73,10 @@ namespace CompGame
         private static void Load()
         {
             _log.Write("Загрузка сцены");
-            
+
             const int _maxObjectsCount = 30;
             const int _kitCount = 5;
-            
+
             var rnd = new Random();
 
             var _starsCount = rnd.Next(5, _maxObjectsCount);
@@ -110,34 +110,31 @@ namespace CompGame
         private static void Update()
         {
             _log.Write("Обновление кадра");
-            
+
             // TODO: Иногда возникает исключение выхода за пределы массива. Необходимо исправить
 
-            try
+//                if (Bullets.Any())
+            for (var i = 0; i < Bullets.Count; i++)
             {
-                if (Bullets.Any())
-                    for (var i = 0; i < Bullets.Count; i++)
+                for (var j = 0; j < Asteroids.Count; j++)
+                {
+                    try
                     {
-                        for (var j = 0; j < Asteroids.Count; j++)
-                        {
-                            if (Bullets[i] == null || !Asteroids[j].Collision(Bullets[i])) continue;
-
-                            System.Media.SystemSounds.Hand.Play();
-                            Bullets.RemoveAt(i);
-                            Ship.ScoreAdd();
-                            Asteroids.RemoveAt(j);
-                        }
+                        if (!Asteroids[j].Collision(Bullets[i])) continue;
                     }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                        _log.Write(e.Message);
+                        i--;
+                    }
+
+                    System.Media.SystemSounds.Hand.Play();
+                    Bullets.RemoveAt(i);
+                    Ship.ScoreAdd();
+                    Asteroids.RemoveAt(j);
+                }
             }
-            catch (IndexOutOfRangeException e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            
+
             for (var i = 0; i < Asteroids.Count; i++)
             {
                 if (!Ship.Collision(Asteroids[i])) continue;
@@ -177,7 +174,7 @@ namespace CompGame
         public static void Finish()
         {
             _log.Write("Конец игры");
-            
+
             Timer.Stop();
             Buffer.Graphics.DrawString("The End", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Underline),
                 Brushes.White, 200, 100);

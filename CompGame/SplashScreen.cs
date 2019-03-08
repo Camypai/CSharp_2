@@ -33,7 +33,7 @@ namespace CompGame
 
             Buffer = _context.Allocate(graphics, new Rectangle(0, 0, Width, Height));
 
-            var timer = new Timer {Interval = 100};
+            var timer = new Timer {Interval = 40};
             timer.Start();
 
             var buttonStart = new Button
