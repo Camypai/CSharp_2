@@ -31,7 +31,7 @@ namespace CompGame.Models
         {
             _log.Write("Вызов конструктора патрона");
             
-            return new Bullet(new Point(_ship.Rectangle.X+10, _ship.Rectangle.Y + 4), new Point(6, 0),
+            return new Bullet(new Point(_ship.Rectangle.X+10, _ship.Rectangle.Y + 9), new Point(6, 0),
                 new Size(4,1));
         }
     }

@@ -7,6 +7,8 @@ namespace CompGame.Models
     public class Star : BaseObject
     {
         private ILog _log = new ConsoleLog<Star>();
+
+        private readonly Image _star;
         
         /// <summary>
         /// Инициализация звезды
@@ -17,6 +19,9 @@ namespace CompGame.Models
         /// <param name="log">Метод логгирования</param>
         public Star(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
+            _star = Image.FromFile(
+                @"Images\star_blue.png",
+                true).GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
 //            _log.Write("Создан");
         }
 
@@ -25,8 +30,7 @@ namespace CompGame.Models
         /// </summary>
         public override void Draw()
         {
-            Scene.Buffer.Graphics.DrawLine(Pens.White, Pos.X, Pos.Y, Pos.X + Size.Width, Pos.Y + Size.Height);
-            Scene.Buffer.Graphics.DrawLine(Pens.White, Pos.X + Size.Width, Pos.Y, Pos.X, Pos.Y + Size.Height);
+            Scene.Buffer.Graphics.DrawImage(_star, Pos);
 //            _log.Write("Отрисован");
         }
 

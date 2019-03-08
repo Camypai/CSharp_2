@@ -20,7 +20,7 @@ namespace CompGame.Models
             var constRnd = rnd.Next(2, 30);
 
             return new Kit(new Point(rnd.Next(Scene.Width), rnd.Next(0, Scene.Height)), new Point(-constRnd, 0),
-                new Size(5, 5));
+                new Size(8, 8));
         }
     }
 }

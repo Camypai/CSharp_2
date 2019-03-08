@@ -13,6 +13,11 @@ namespace CompGame.Models
 
         private ILog _log = new ConsoleLog<Ship>();
 
+        /// <summary>
+        /// Изображение корабля
+        /// </summary>
+        private readonly Image _ship;
+
         public int Energy
         {
             get => _energy;
@@ -37,6 +42,9 @@ namespace CompGame.Models
         /// <param name="log">Метод логгирования</param>
         public Ship(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
+            _ship = Image.FromFile(
+                @"Images\Spaceship.png",
+                true).GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
 //            _log.Write("Создан");
         }
 
@@ -45,9 +53,7 @@ namespace CompGame.Models
         /// </summary>
         public override void Draw()
         {
-            Scene.Buffer.Graphics.FillEllipse(Brushes.Wheat, Pos.X, Pos.Y, Size.Width, Size.Height);
-            Scene.Buffer.Graphics.DrawString("Energy:" + Energy, SystemFonts.DefaultFont, Brushes.White, 0, 50);
-            Scene.Buffer.Graphics.DrawString("Score:" + Score, SystemFonts.DefaultFont, Brushes.White, 0, 70);
+            Scene.Buffer.Graphics.DrawImage(_ship, Pos);
 //            _log.Write("Отрисован");
         }
 

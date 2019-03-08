@@ -17,7 +17,7 @@ namespace CompGame.Models
             _log.Write("Вызов конструктора корабля");
             
             return new Ship(new Point(10,400), new Point(5,5),
-                new Size(10,10));
+                new Size(20,20));
         }
     }
 }

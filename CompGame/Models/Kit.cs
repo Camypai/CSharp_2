@@ -7,6 +7,8 @@ namespace CompGame.Models
     public class Kit : BaseObject
     {
         private ILog _log = new ConsoleLog<Kit>();
+
+        private readonly Image _kit;
         
         /// <summary>
         /// Колличество восполняемой энергии корабля
@@ -22,6 +24,9 @@ namespace CompGame.Models
         /// <param name="log">Метод логгирования</param>
         public Kit(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
+            _kit = Image.FromFile(
+                @"Images\heal.png",
+                true).GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
 //            _log.Write("Создан");
         }
 
@@ -30,7 +35,7 @@ namespace CompGame.Models
         /// </summary>
         public override void Draw()
         {
-            Scene.Buffer.Graphics.DrawRectangle(Pens.PaleGreen, Pos.X, Pos.Y, Size.Width, Size.Height);
+            Scene.Buffer.Graphics.DrawImage(_kit, Pos);
 //            _log.Write("Отрисован");
         }
 
