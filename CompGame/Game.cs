@@ -64,6 +64,11 @@ namespace CompGame
             foreach (var asteroid in Asteroids) asteroid.Draw();
 
             Ship?.Draw();
+            if (Ship != null)
+            {
+                Buffer.Graphics.DrawString("Energy:" + Ship.Energy, SystemFonts.DefaultFont, Brushes.White, 0, 50);
+                Buffer.Graphics.DrawString("Score:" + Ship.Score, SystemFonts.DefaultFont, Brushes.White, 0, 70);
+            }
             Buffer.Render();
         }
 
