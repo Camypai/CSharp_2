@@ -135,10 +135,14 @@ namespace CompGame
                     }
 
                     System.Media.SystemSounds.Hand.Play();
+                    if(Bullets.Any())
                     Bullets.RemoveAt(i);
                     Ship.ScoreAdd();
                     Asteroids.RemoveAt(j);
                 }
+                
+                if(Bullets[i].isDelete)
+                    Bullets.RemoveAt(i);
             }
 
             for (var i = 0; i < Asteroids.Count; i++)

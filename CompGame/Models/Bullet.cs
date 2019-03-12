@@ -8,6 +8,8 @@ namespace CompGame.Models
     {
 
         private bool disposed = false;
+        public bool isDelete = false;
+        private readonly Image _bullet;
         private ILog _log = new ConsoleLog<Bullet>();
         
         /// <inheritdoc />
@@ -20,6 +22,9 @@ namespace CompGame.Models
         /// <param name="log">Метод логгирования</param>
         public Bullet(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
+            _bullet = Image.FromFile(
+                @"Images\bullet.png",
+                true).GetThumbnailImage(Size.Width, Size.Height, null, IntPtr.Zero);
 //            _log.Write("Создан");
         }
 
@@ -29,7 +34,15 @@ namespace CompGame.Models
         /// </summary>
         public override void Draw()
         {
-            Scene.Buffer.Graphics.DrawRectangle(Pens.OrangeRed, Pos.X, Pos.Y, Size.Width, Size.Height);
+            try
+            {
+
+                Scene.Buffer.Graphics.DrawImage(_bullet, Pos);
+            }
+            catch(Exception e)
+            {
+                _log.Write(e.Message);
+            }
 //            _log.Write("Отрисован");
         }
 
@@ -85,6 +98,7 @@ namespace CompGame.Models
                     Dir = Point.Empty;
                     Size = Size.Empty;
                     Pos = Point.Empty;
+                    isDelete = true;
                     _log.Write("Отчистка объекта");
                 }
                 

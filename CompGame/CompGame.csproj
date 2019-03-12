@@ -66,6 +66,9 @@
     <Compile Include="Menu.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\bullet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\heal.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
