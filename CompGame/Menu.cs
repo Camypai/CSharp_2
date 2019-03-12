@@ -7,7 +7,7 @@ using CompGame.Models;
 
 namespace CompGame
 {
-    internal class SplashScreen : Scene
+    internal class Menu : Scene
     {
         private static BufferedGraphicsContext _context;
 
