@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using CompGame.Exceptions;
 using CompGame.Interfaces;
 
@@ -7,11 +8,29 @@ namespace CompGame.Models
 {
     public abstract class BaseObject : ICollision
     {
+        /// <summary>
+        /// Позиция объекта на экране
+        /// </summary>
         protected Point Pos;
+        /// <summary>
+        /// Смещение объекта
+        /// </summary>
         protected Point Dir;
+        /// <summary>
+        /// Размер объекта
+        /// </summary>
         protected Size Size;
 
+        /// <summary>
+        /// Область взаимодействия объекта
+        /// </summary>
         public Rectangle Rectangle => new Rectangle(Pos, Size);
+        
+        /// <summary>
+        /// Делегат сообщения на экране
+        /// </summary>
+        public delegate void Message();
+
 
         /// <summary>
         /// Инициализация объекта
@@ -51,11 +70,28 @@ namespace CompGame.Models
         /// </summary>
         public abstract void Update();
 
+        /// <summary>
+        /// Провека на коллизию
+        /// </summary>
+        /// <param name="collision">Объект проверки</param>
+        /// <returns></returns>
         public bool Collision(ICollision collision)
         {
             return collision.Rectangle.IntersectsWith(Rectangle);
         }
 
+        /// <summary>
+        /// Перезагрузка объекта
+        /// </summary>
         public abstract void Reload();
+
+        /// <summary>
+        /// Уничтожение объекта
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual void Die()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
