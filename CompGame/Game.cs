@@ -13,7 +13,7 @@ namespace CompGame
     {
         private static BufferedGraphicsContext _context;
 
-        private static ILog _log = new ConsoleLog<Game>();
+        private static readonly ILog Log = new ConsoleLog<Game>();
 
         private static List<BaseObject> _baseObjects;
         private static readonly List<Bullet> Bullets = new List<Bullet>();
@@ -32,9 +32,9 @@ namespace CompGame
         /// Инициализация сцены на форме
         /// </summary>
         /// <param name="form">Форма, на которой происходит инициализация</param>
-        public static void Init(Form form)
+        public override void Init(Form form)
         {
-            _log.Write("Инициализация");
+            Log.Write("Инициализация");
             _context = BufferedGraphicsManager.Current;
             var graphics = form.CreateGraphics();
             Buffer.Dispose();
@@ -53,9 +53,9 @@ namespace CompGame
         /// <summary>
         /// Отрисовка объектов на сцене
         /// </summary>
-        private static void Draw()
+        public override void Draw()
         {
-            _log.Write("Отрисовка объектов на сцене");
+            Log.Write("Отрисовка объектов на сцене");
             Buffer.Graphics.Clear(Color.Black);
             foreach (var baseObject in _baseObjects)
                 baseObject.Draw();
@@ -64,6 +64,8 @@ namespace CompGame
             foreach (var asteroid in Asteroids) asteroid.Draw();
 
             Ship?.Draw();
+            
+            // Отрисовка интерфейса
             if (Ship != null)
             {
                 Buffer.Graphics.DrawString("Energy:" + Ship.Energy, SystemFonts.DefaultFont, Brushes.White, 0, 50);
@@ -75,9 +77,9 @@ namespace CompGame
         /// <summary>
         /// Загрузка сцены игры
         /// </summary>
-        private static void Load()
+        public override void Load()
         {
-            _log.Write("Загрузка сцены");
+            Log.Write("Загрузка сцены");
 
             const int _maxObjectsCount = 30;
             const int _kitCount = 5;
@@ -112,13 +114,12 @@ namespace CompGame
         /// <summary>
         /// Обновление отрисованных объектов на сцене
         /// </summary>
-        private static void Update()
+        public override void Update()
         {
-            _log.Write("Обновление кадра");
+            Log.Write("Обновление кадра");
 
             // TODO: Иногда возникает исключение выхода за пределы массива. Необходимо исправить
-
-//                if (Bullets.Any())
+            
             for (var i = 0; i < Bullets.Count; i++)
             {
                 for (var j = 0; j < Asteroids.Count; j++)
@@ -129,8 +130,8 @@ namespace CompGame
                     }
                     catch (ArgumentOutOfRangeException e)
                     {
-                        _log.Write(e.Message);
-                        i--;
+                        Log.Write(e.Message);
+                        i = i > 0 ? --i : 0;
                     }
 
                     System.Media.SystemSounds.Hand.Play();
@@ -176,9 +177,9 @@ namespace CompGame
         /// <summary>
         /// Конец игры
         /// </summary>
-        public static void Finish()
+        public override void Finish()
         {
-            _log.Write("Конец игры");
+            Log.Write("Конец игры");
 
             Timer.Stop();
             Buffer.Graphics.DrawString("The End", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Underline),
@@ -191,7 +192,7 @@ namespace CompGame
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             Draw();
             Update();
@@ -202,7 +203,7 @@ namespace CompGame
         /// </summary>
         /// <param name="sender">Источник</param>
         /// <param name="e">Событие нажатия клавиш</param>
-        private static void Form_KeyDown(object sender, KeyEventArgs e)
+        private void Form_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {

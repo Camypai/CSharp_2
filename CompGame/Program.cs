@@ -22,10 +22,12 @@ namespace CompGame
                     }
                 }
             };
+            
+            var menu = new Menu();
 
-            SplashScreen.Init(form);
+            menu.Init(form);
             form.Show();
-            SplashScreen.Load();
+            menu.Load();
             Application.Run(form);
         }
     }

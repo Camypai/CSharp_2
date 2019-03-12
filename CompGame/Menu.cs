@@ -10,31 +10,35 @@ namespace CompGame
     internal class Menu : Scene
     {
         private static BufferedGraphicsContext _context;
+        private static List<BaseObject> _baseObjects;
 
-        private static List<BaseObject> _BaseObjects;
-        
         private static readonly StarCreator StarCreator = new StarCreator();
         private static readonly AsteroidCreator AsteroidCreator = new AsteroidCreator();
         private static readonly LineCreator LineCreator = new LineCreator();
+        
+        private Game _game;
+        private Form _form;
+        private readonly Timer _timer = new Timer {Interval = 40};
 
         /// <summary>
         /// Инициализация сцены на форме
         /// </summary>
         /// <param name="form">Форма, на которой происходит инициализация</param>
-        public static void Init(Form form)
+        public override void Init(Form form)
         {
+            _form = form;
             _context = BufferedGraphicsManager.Current;
             var graphics = form.CreateGraphics();
             Width = form.ClientSize.Width;
             Height = form.ClientSize.Height;
 
-            if(Width > 1000 || Height > 1000 || Width < 0 || Height < 0)
+            if (Width > 1000 || Height > 1000 || Width < 0 || Height < 0)
                 throw new ArgumentOutOfRangeException();
 
             Buffer = _context.Allocate(graphics, new Rectangle(0, 0, Width, Height));
 
-            var timer = new Timer {Interval = 40};
-            timer.Start();
+
+            _timer.Start();
 
             var buttonStart = new Button
             {
@@ -43,17 +47,7 @@ namespace CompGame
             };
 
             buttonStart.Location = new Point(Width / 2 - buttonStart.Width / 2, Height / 2);
-            buttonStart.Click += (sender, args) =>
-            {
-                foreach (Control control in form.Controls)
-                {
-                    if (control is Button)
-                        control.Visible = false;
-                }
-
-                Game.Init(form);
-                timer.Tick -= Timer_Tick;
-            };
+            buttonStart.Click += ButtonStartOnClick;
 
             var buttonRecords = new Button
             {
@@ -63,10 +57,8 @@ namespace CompGame
 
             buttonRecords.Location = new Point(Width / 2 - buttonRecords.Width / 2,
                 buttonStart.Location.Y + buttonRecords.Height * 2);
-            buttonRecords.Click += (sender, args) =>
-            {
-                MessageBox.Show("В разработке", "Таблица рекордов", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            };
+            buttonRecords.Click += ButtonRecordsOnClick;
+
 
             var buttonExit = new Button
             {
@@ -76,7 +68,7 @@ namespace CompGame
 
             buttonExit.Location = new Point(Width / 2 - buttonExit.Width / 2,
                 buttonRecords.Location.Y + buttonExit.Height * 2);
-            buttonExit.Click += (sender, args) => Application.Exit();
+            buttonExit.Click += ButtonExitOnClick;
 
 
             form.Controls.Add(buttonStart);
@@ -85,16 +77,55 @@ namespace CompGame
 
             Load();
 
-            timer.Tick += Timer_Tick;
+            _timer.Tick += Timer_Tick;
+        }
+
+        /// <summary>
+        /// Событие при нажатии на кнопку "Выход"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonExitOnClick(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        /// <summary>
+        /// Событие при нажатии на кнопку "Таблица рекордов"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonRecordsOnClick(object sender, EventArgs e)
+        {
+            MessageBox.Show("В разработке", "Таблица рекордов", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        /// <summary>
+        /// Событие при нажатии на кнопку "Начать игру"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonStartOnClick(object sender, EventArgs e)
+        {
+            _game = new Game();
+
+            foreach (Control control in _form.Controls)
+            {
+                if (control is Button)
+                    control.Visible = false;
+            }
+
+            _game.Init(_form);
+            _timer.Tick -= Timer_Tick;
         }
 
         /// <summary>
         /// Отрисовка объектов на сцене
         /// </summary>
-        public static void Draw()
+        public override void Draw()
         {
             Buffer.Graphics.Clear(Color.Black);
-            foreach (var baseObject in _BaseObjects)
+            foreach (var baseObject in _baseObjects)
                 baseObject.Draw();
             Buffer.Render();
         }
@@ -102,7 +133,7 @@ namespace CompGame
         /// <summary>
         /// Загрузка сцены игры
         /// </summary>
-        public static void Load()
+        public override void Load()
         {
             const int _maxObjectsCount = 30;
 
@@ -132,18 +163,18 @@ namespace CompGame
             for (var i = 0; i < _linesCount; i++)
                 _lines[i] = LineCreator.Create(rnd);
 
-            _BaseObjects = new List<BaseObject>();
-            _BaseObjects.AddRange(_stars);
-            _BaseObjects.AddRange(_lines);
-            _BaseObjects.AddRange(_asteroids);
+            _baseObjects = new List<BaseObject>();
+            _baseObjects.AddRange(_stars);
+            _baseObjects.AddRange(_lines);
+            _baseObjects.AddRange(_asteroids);
         }
 
         /// <summary>
         /// Обновление отрисованных объектов на сцене
         /// </summary>
-        private static void Update()
+        public override void Update()
         {
-            foreach (var baseObject in _BaseObjects)
+            foreach (var baseObject in _baseObjects)
                 baseObject.Update();
         }
 
@@ -152,7 +183,7 @@ namespace CompGame
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             Draw();
             Update();
